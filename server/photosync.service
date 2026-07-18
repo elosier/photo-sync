@@ -1,0 +1,36 @@
+# systemd unit for the photo-sync receiver.
+# Install to /etc/systemd/system/photosync.service, then:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now photosync
+#
+# Adjust User/Group, WorkingDirectory and paths to match your install.
+
+[Unit]
+Description=Photo Sync receiver
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Run as the account that owns the content under /data/photos so new files and
+# folders are created with consistent ownership. /data/photos itself can stay
+# root:root 0777 (world-writable) — this user only needs write access there.
+User=youruser
+Group=youruser
+WorkingDirectory=/opt/photosync/server
+EnvironmentFile=/opt/photosync/server/.env
+# umask 000 so the app's explicit chmod 777 on folders is not narrowed.
+UMask=000
+ExecStart=/opt/photosync/server/.venv/bin/uvicorn app.main:app \
+    --host ${PHOTOSYNC_HOST} --port ${PHOTOSYNC_PORT} \
+    --proxy-headers --forwarded-allow-ips="127.0.0.1"
+Restart=always
+RestartSec=5
+# Hardening (relax if it conflicts with your /data mount).
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/data/photos
+
+[Install]
+WantedBy=multi-user.target

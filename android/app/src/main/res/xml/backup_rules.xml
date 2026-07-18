@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Do not back up the encrypted token store or the local sync database;
+         they are device-specific. -->
+    <exclude domain="sharedpref" path="photosync_secure.xml" />
+    <exclude domain="database" path="photosync.db" />
+</full-backup-content>

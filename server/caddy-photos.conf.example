@@ -1,0 +1,59 @@
+# Caddy config for exposing the photo-sync receiver under /photos on the SAME
+# :8443 site that already serves the RSS reader.
+#
+# Live config on the server: /etc/caddy/Caddyfile  (repo copy: ~/rss-reader/deploy/Caddyfile)
+#
+# The phone uploads to: https://your-domain.duckdns.org:8443/photos/v1/upload
+#
+# IMPORTANT — basicauth scoping:
+# The reader is gated by `basicauth`, which in the original config was a
+# site-level directive and therefore applied to EVERY request on :8443. The
+# photo app uses its own Bearer token and does NOT send HTTP Basic credentials,
+# so /photos must NOT be behind basicauth. Move basicauth INTO the reader's
+# `handle` block (as below) so it gates only the reader.
+#
+# The global block (which disables HTTP/3) is shown for context — leave it as-is:
+
+{
+    servers { protocols h1 h2 }
+}
+
+your-domain.duckdns.org:8443 {
+    # Cert obtained out-of-band by acme.sh (DNS-01 via DuckDNS).
+    tls /etc/caddy/certs/your-domain.duckdns.org.cer /etc/caddy/certs/your-domain.duckdns.org.key
+    encode gzip
+
+    # Photo-sync receiver under /photos -> uvicorn on 127.0.0.1:8080.
+    # handle_path strips the /photos prefix before forwarding (like nginx's
+    # `proxy_pass ...:8080/` with a trailing slash). X-Forwarded-Prefix lets the
+    # app rebuild absolute URLs from its root_path. Auth = the app's own Bearer
+    # token, so deliberately NO basicauth on this route.
+    handle_path /photos/* {
+        reverse_proxy 127.0.0.1:8080 {
+            header_up X-Forwarded-Prefix /photos
+            flush_interval -1          # stream large up/downloads, don't buffer
+        }
+    }
+
+    # Everything else -> the RSS reader, still gated by basic auth.
+    # (Caddy < 2.8 uses `basicauth`; 2.8+ uses `basic_auth`. Keep your existing
+    # hash — generate with `caddy hash-password`.)
+    handle {
+        basicauth {
+            youruser <paste the hash printed by: caddy hash-password>
+        }
+        reverse_proxy 127.0.0.1:3000
+    }
+}
+
+# Notes:
+# - Caddy streams request bodies by default and imposes no max-body-size, so the
+#   nginx equivalents (client_max_body_size, proxy_request_buffering off,
+#   proxy_read/send_timeout) are unnecessary. `flush_interval -1` handles
+#   streaming large *responses* (e.g. video downloads).
+# - Caddy sets X-Forwarded-For / -Proto / -Host automatically; only
+#   X-Forwarded-Prefix needs to be added (done above).
+#
+# Validate + reload:
+#   sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+#   sudo systemctl reload caddy

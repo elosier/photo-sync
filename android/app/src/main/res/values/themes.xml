@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose draws the UI; the activity only needs a no-action-bar base
+         theme. Using the platform Material theme avoids pulling in the
+         com.google.android.material dependency. -->
+    <style name="Theme.PhotoSync" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/ic_launcher_background</item>
+    </style>
+</resources>

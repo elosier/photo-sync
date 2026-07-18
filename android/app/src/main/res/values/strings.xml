@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Photo Sync</string>
+    <string name="sync_channel_name">Photo sync</string>
+    <string name="sync_channel_desc">Uploading photos and videos to the home server</string>
+</resources>
