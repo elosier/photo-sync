@@ -84,6 +84,26 @@ deployed to the server, tested on physical phones, and reported results — but
 did not write the code or documentation. This README, the guide, and every
 source file are AI-authored.
 
+### Models used
+
+Two Anthropic models were used across the session, both driven through Claude
+Code:
+
+- **Claude Opus 4.8** — initial architecture and the complete first
+  implementation (the Kotlin Android app and the Python/FastAPI server), the
+  deployment guide, interactive deploy- and build-troubleshooting (Caddy
+  reverse proxy, systemd, sideloading onto the phone), several bug fixes
+  (Android 14+ foreground-service crash, live-updating status UI, device folder
+  auto-detection), and the final open-source release steps (GitHub push, MIT
+  license, and this documentation).
+- **Claude Fable 5** — a full security and code audit and the resulting
+  hardening (Android 15-compliant media-change watching that replaced an
+  always-on foreground service, partial "Select photos" access handling, and
+  response authentication that defeats captive-portal/proxy spoofing), two
+  added features (camera-roll-only filtering and give-up-after-N-retries),
+  multi-device debugging (the OnePlus Nord N30 phantom-upload investigation),
+  and the initial repository scrub for public release.
+
 ## License
 
 Released under the [MIT License](LICENSE).
