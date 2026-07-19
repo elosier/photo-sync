@@ -59,3 +59,7 @@ photo-sync/
 ```
 
 **Full setup instructions are in [`GUIDE.md`](GUIDE.md).** Start there.
+
+## License
+
+Released under the [MIT License](LICENSE).
