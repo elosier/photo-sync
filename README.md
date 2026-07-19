@@ -1,7 +1,13 @@
 # Photo Sync
 
-One-way backup of the photos **and** videos on an Android phone to the server
-home server. Two parts:
+> **🤖 Built entirely by AI.** Every line of code, all documentation, and the
+> debugging were written by Claude (Anthropic's AI) in Claude Code. A human
+> directed the work — specifying requirements, deploying to a real server,
+> testing on physical phones, and reporting back results — but wrote none of the
+> code or docs themselves. See [Development](#development) for details.
+
+One-way backup of the photos **and** videos on an Android phone to a
+self-hosted home server. Two parts:
 
 | Part | Where it runs | Tech |
 |------|---------------|------|
@@ -59,6 +65,24 @@ photo-sync/
 ```
 
 **Full setup instructions are in [`GUIDE.md`](GUIDE.md).** Start there.
+
+## Development
+
+This project was developed **entirely by AI** — specifically Claude (Anthropic)
+running in Claude Code. Across a single collaborative session, the AI:
+
+- designed the architecture and wrote all Kotlin (Android app) and Python
+  (FastAPI server) code, plus the Caddy/systemd config and the setup guide;
+- diagnosed and fixed real runtime bugs from device logs (an Android 14+
+  foreground-service crash, a stale-UI issue, a response-spoofing hole exposed
+  by a captive-portal-style network);
+- adapted the app for multiple devices (Samsung Galaxy S25 Ultra, OnePlus Nord
+  N30 5G) and prepared this repository for public release.
+
+The human collaborator provided the goals and constraints, ran the commands,
+deployed to the server, tested on physical phones, and reported results — but
+did not write the code or documentation. This README, the guide, and every
+source file are AI-authored.
 
 ## License
 
